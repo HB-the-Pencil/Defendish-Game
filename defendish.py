@@ -26,9 +26,24 @@ class Defendish:
 
         pygame.display.set_caption("Defendish")
 
-        self.bg_color = (220, 220, 220)
+        self.bg = pygame.image.load("images/bg_1.png")
+
+        self.bg = pygame.transform.scale(self.bg,
+            (self.bg.get_width() * self.settings.scale,
+             self.bg.get_height() * self.settings.scale)
+        )
+
+        self.bg_rect = self.bg.get_rect()
+
+        self.bg_rect.x = 0
+        self.bg_rect.y = 0
+
+        self.bg_w = self.bg_rect.w
 
         self.ship = Ship(self)
+
+        self.cam = self.ship.cam
+
 
     def _check_events(self):
         """
@@ -43,35 +58,67 @@ class Defendish:
                 sys.exit()
 
             elif event.type == KEYDOWN:
-                if event.key == K_RIGHT:
-                    self.ship.moving_r = True
-                    # Eventually, this will change to "flip" the ship at the
-                    # edge of the motion field (where it changes to the
-                    # background scroll instead).
-                    self.ship.dir = "r"
-
-                elif event.key == K_LEFT:
-                    self.ship.moving_l = True
-                    self.ship.dir = "l"
-
-                if event.key == K_UP:
-                    self.ship.moving_u = True
-
-                elif event.key == K_DOWN:
-                    self.ship.moving_d = True
+                self._check_keydown_events(event)
 
             elif event.type == KEYUP:
-                if event.key == K_RIGHT:
-                    self.ship.moving_r = False
+                self._check_keyup_events(event)
 
-                elif event.key == K_LEFT:
-                    self.ship.moving_l = False
 
-                if event.key == K_UP:
-                    self.ship.moving_u = False
+    def _check_keydown_events(self, event):
+        """
+        Process events when a key is down.
 
-                elif event.key == K_DOWN:
-                    self.ship.moving_d = False
+        :param event: Keypress event that was triggered.
+        :return: Moves the ship, fires bullets, etc.
+        """
+        if event.key == K_RIGHT:
+            self.ship.dir = "r"
+
+            # Flip the ship.
+            if self.ship.rect.x > 146 * self.settings.scale:
+                self.ship.flip_x = self.settings.player_max_speed * 1.5
+
+            self.ship.moving_r = True
+
+        elif event.key == K_LEFT:
+            self.ship.dir = "l"
+
+            # Flip the ship.
+            if self.ship.rect.x < 146 * self.settings.scale:
+                self.ship.flip_x = -self.settings.player_max_speed * 1.5
+
+            self.ship.moving_l = True
+
+        if event.key == K_UP:
+            self.ship.moving_u = True
+
+        elif event.key == K_DOWN:
+            self.ship.moving_d = True
+
+        elif event.key == K_q:
+            pygame.quit()
+            sys.exit()
+
+
+    def _check_keyup_events(self, event):
+        """
+        Process events when a key is up.
+
+        :param event: Keypress event that was triggered.
+        :return: Stops moving the ship, etc.
+        """
+        if event.key == K_RIGHT:
+            self.ship.moving_r = False
+
+        elif event.key == K_LEFT:
+            self.ship.moving_l = False
+
+        if event.key == K_UP:
+            self.ship.moving_u = False
+
+        elif event.key == K_DOWN:
+            self.ship.moving_d = False
+
 
     def _update_screen(self):
         """
@@ -82,12 +129,37 @@ class Defendish:
         # Redraw the background.
         self.screen.fill(self.settings.bg_color)
 
+        # Loop the camera.
+        if self.cam.x < -self.bg_w:
+            self.cam.x %= self.bg_w
+
+        if self.cam.x > self.bg_w:
+            self.cam.x %= self.bg_w
+
+        self.bg_rect.x = self.cam.x
+        self.screen.blit(self.bg, self.bg_rect)
+
+        # These extra draws are to provide the illusion of a loop.
+        self.bg_rect.x = self.cam.x + self.bg_w
+        self.screen.blit(self.bg, self.bg_rect)
+
+        self.bg_rect.x = self.cam.x - self.bg_w
+        self.screen.blit(self.bg, self.bg_rect)
+
         # Draw and update the ship.
         self.ship.update()
         self.ship.draw()
 
-        # Flip the display.
-        pygame.display.flip()
+        # This is where the scanner will go.
+        pygame.draw.line(self.screen, (225, 125, 0),
+            (4, 32 * self.settings.scale),
+            (290 * self.settings.scale, 32 * self.settings.scale),
+            self.settings.scale
+        )
+
+        # Update the display.
+        pygame.display.update()
+
 
     def run_game(self):
         """
