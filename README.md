@@ -7,7 +7,9 @@ To run the program, download the release, open your terminal, change directories
 pip install -r requirements.txt
 ```
 
-If you are using PyCharm as your editor, you can also open the terminal in the lower right corner and run the same command. There will be a build eventually so that it can run as an executable file.
+If you are using PyCharm as your editor, you can also open the terminal in the lower right corner and run the same command. PyCharm may even suggest that there is a requirement package and ask to set up the virtual environment for you.
+
+There will be a build eventually so that it can run as an executable file.
 
 ## Version Notes:
 ### 1.0 (Bare Bones Update):
