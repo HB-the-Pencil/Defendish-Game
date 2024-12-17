@@ -26,7 +26,7 @@ class Defendish:
 
         pygame.display.set_caption("Defendish")
 
-        self.bg = pygame.image.load("images/bg_1.png")
+        self.bg = pygame.image.load("images/bg.png")
 
         self.bg = pygame.transform.scale(self.bg,
             (self.bg.get_width() * self.settings.scale,
@@ -71,6 +71,12 @@ class Defendish:
         :param event: Keypress event that was triggered.
         :return: Moves the ship, fires bullets, etc.
         """
+        if event.key == K_UP:
+            self.ship.moving_u = True
+
+        elif event.key == K_DOWN:
+            self.ship.moving_d = True
+
         if event.key == K_RIGHT:
             self.ship.dir = "r"
 
@@ -80,7 +86,7 @@ class Defendish:
 
             self.ship.moving_r = True
 
-        elif event.key == K_LEFT:
+        if event.key == K_LEFT:
             self.ship.dir = "l"
 
             # Flip the ship.
@@ -88,12 +94,6 @@ class Defendish:
                 self.ship.flip_x = -self.settings.player_max_speed * 1.5
 
             self.ship.moving_l = True
-
-        if event.key == K_UP:
-            self.ship.moving_u = True
-
-        elif event.key == K_DOWN:
-            self.ship.moving_d = True
 
         elif event.key == K_q:
             pygame.quit()
@@ -110,7 +110,7 @@ class Defendish:
         if event.key == K_RIGHT:
             self.ship.moving_r = False
 
-        elif event.key == K_LEFT:
+        if event.key == K_LEFT:
             self.ship.moving_l = False
 
         if event.key == K_UP:

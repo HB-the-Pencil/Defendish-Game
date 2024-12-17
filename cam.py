@@ -1,7 +1,7 @@
 class Camera:
     """Class to represent a camera, which draws everything on screen."""
 
-    def __init__(self, xy, w, h):
+    def __init__(self, x, y, w, h):
         """
         Initialize the camera's window.
 
@@ -10,8 +10,8 @@ class Camera:
         :param w: Width of the camera.
         :param h: Height of the camera.
         """
-        self.x = xy[0]
-        self.y = xy[1]
+        self.x = x
+        self.y = y
         self.w = w
         self.h = h
 

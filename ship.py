@@ -17,14 +17,14 @@ class Ship:
         self.screen = d_game.screen
         self.screen_rect = d_game.screen.get_rect()
 
-        self.cam = Camera(self.screen_rect.center, self.screen_rect.width,
+        self.cam = Camera(self.screen_rect.x, self.screen_rect.y, self.screen_rect.width,
             self.screen_rect.height
         )
 
         # Import the ship images.
         self.images = {
-            "ship_l": pygame.image.load("images/ship_l_1.png"),
-            "ship_r": pygame.image.load("images/ship_r_1.png"),
+            "ship_l": pygame.image.load("images/ship_l.png"),
+            "ship_r": pygame.image.load("images/ship_r.png"),
         }
 
         # Define a direction and frame to draw different ship images.
@@ -78,18 +78,18 @@ class Ship:
         # Draw the flames.
         if self.moving_r:
             for i in range(5):
-                for j in range(12):
+                for j in range(10):
 
                     # 50% chance for a pixel to be off.
                     if r.random() < 0.5:
                         continue
 
                     # Shape the flame into a point.
-                    if (((i == 0 or i == 4) and j > 3) or
-                            ((i == 1 or i == 3) and j > 7)):
+                    if (((i == 0 or i == 4) and j > 2) or
+                            ((i == 1 or i == 3) and j > 6)):
                         break
 
-                    rectx = self.x - self.scale * 2 - j * self.scale
+                    rectx = self.x - self.scale - j * self.scale
                     recty = self.y + i * self.scale + self.scale
 
                     pygame.draw.rect(self.screen, r.choice(flame_colors),
@@ -104,7 +104,7 @@ class Ship:
                     if r.random() < 0.5:
                         continue
 
-                    rectx = self.x - self.scale * 2 - j * self.scale
+                    rectx = self.x - self.scale - j * self.scale
                     recty = self.y + i * self.scale + self.scale
 
                     pygame.draw.rect(self.screen, r.choice(flame_colors),
@@ -114,18 +114,18 @@ class Ship:
         # Left-facing flames.
         elif self.moving_l:
             for i in range(5):
-                for j in range(12):
+                for j in range(10):
 
                     # 50% chance for a pixel to be off.
                     if r.random() < 0.5:
                         continue
 
                     # Shape the flame into a point.
-                    if (((i == 0 or i == 4) and j > 3) or
-                            ((i == 1 or i == 3) and j > 7)):
+                    if (((i == 0 or i == 4) and j > 2) or
+                            ((i == 1 or i == 3) and j > 6)):
                         break
 
-                    rectx = self.x + self.scale * 2 + j * self.scale + self.w
+                    rectx = self.x + j * self.scale + self.w
                     recty = self.y + i * self.scale + self.scale
 
                     pygame.draw.rect(self.screen, r.choice(flame_colors),
@@ -140,7 +140,7 @@ class Ship:
                     if r.random() < 0.5:
                         continue
 
-                    rectx = self.x + self.scale * 2 + j * self.scale + self.w
+                    rectx = self.x + j * self.scale + self.w
                     recty = self.y + i * self.scale + self.scale
 
                     pygame.draw.rect(self.screen, r.choice(flame_colors),
@@ -163,10 +163,16 @@ class Ship:
 
         # X movement.
         if self.moving_r:
+            self.moving_l = False
+            self.dir = "r"
+
             if self.veloc_x < self.settings.player_max_speed:
                 self.veloc_x += self.settings.player_accel
 
         elif self.moving_l:
+            self.moving_r = False
+            self.dir = "l"
+
             if self.veloc_x > -self.settings.player_max_speed:
                 self.veloc_x -= self.settings.player_accel
 
