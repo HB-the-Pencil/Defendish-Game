@@ -1,13 +1,13 @@
 # Defendish-Game
 This is a clone of the arcade game Defender created in Pygame. Sprites were redrawn by hand (and the background was generated using a Khan Academy program) and based on the spritesheet found at [https://seanriddle.com/defendersprites.jpg](https://seanriddle.com/defendersprites.jpg). The project is based on Chapter 12 of the book Python Crash Course, but turned into Defender instead of Space Invaders.
 
-To run the program, download the release, open your terminal, change directories to the file, and type:
+~~To run the program, download the release, open your terminal, change directories to the file, and type:~~
 
-```powershell
-pip install -r requirements.txt
-```
+~~pip install -r requirements.txt~~
 
-If you are using PyCharm as your editor, you can also open the terminal in the lower right corner and run the same command. PyCharm may even suggest that there is a requirement package and ask to set up the virtual environment for you.
+~~If you are using PyCharm as your editor, you can also open the terminal in the lower right corner and run the same command. PyCharm may even suggest that there is a requirement package and ask to set up the virtual environment for you.~~
+
+You can still manually install dependencies based on the above steps, but the code now does it for you :D
 
 There will be a build eventually so that it can run as an executable file.
 
