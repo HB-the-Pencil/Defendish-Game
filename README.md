@@ -27,3 +27,8 @@ There will be a build eventually so that it can run as an executable file.
 - Minor bug fixes, mostly
 - Imported sprite images
 - Created requirements.txt
+
+### 1.0.3 (Easy Update):
+- Created main.py for easier runnning
+- Wrote script to automatically import dependencies
+- Began adding scanner
