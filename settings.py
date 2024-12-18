@@ -15,5 +15,5 @@ class Settings:
         self.player_h = 6*self.scale
 
         self.player_max_speed = 5 * self.scale
-        self.player_accel = self.player_max_speed / 50
+        self.player_accel = self.scale/30
         self.player_decel = 0.98
