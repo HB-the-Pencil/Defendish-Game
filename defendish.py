@@ -1,4 +1,11 @@
 import sys
+import subprocess
+
+try:
+    subprocess.check_call([sys.executable,
+        "-m", "pip", "install", "-r", "requirements.txt"])
+except subprocess.CalledProcessError:
+    print("Error importing modules")
 
 import pygame
 from pygame.locals import *
@@ -24,19 +31,19 @@ class Defendish:
             (self.settings.screen_w, self.settings.screen_h)
         )
 
+        self.scale = self.settings.scale
+
         pygame.display.set_caption("Defendish")
 
         self.bg = pygame.image.load("images/bg.png")
-
         self.bg = pygame.transform.scale(self.bg,
-            (self.bg.get_width() * self.settings.scale,
-             self.bg.get_height() * self.settings.scale)
+            (self.bg.get_width() * self.scale,
+             self.bg.get_height() * self.scale)
         )
-
         self.bg_rect = self.bg.get_rect()
 
         self.bg_rect.x = 0
-        self.bg_rect.y = 0
+        self.bg_rect.y = 32 * self.scale
 
         self.bg_w = self.bg_rect.w
 
@@ -78,21 +85,9 @@ class Defendish:
             self.ship.moving_d = True
 
         if event.key == K_RIGHT:
-            self.ship.dir = "r"
-
-            # Flip the ship.
-            if self.ship.rect.x > 146 * self.settings.scale:
-                self.ship.flip_x = self.settings.player_max_speed * 1.5
-
             self.ship.moving_r = True
 
         if event.key == K_LEFT:
-            self.ship.dir = "l"
-
-            # Flip the ship.
-            if self.ship.rect.x < 146 * self.settings.scale:
-                self.ship.flip_x = -self.settings.player_max_speed * 1.5
-
             self.ship.moving_l = True
 
         elif event.key == K_q:
@@ -131,10 +126,10 @@ class Defendish:
 
         # Loop the camera.
         if self.cam.x < -self.bg_w:
-            self.cam.x %= self.bg_w
+            self.cam.x = self.bg_w
 
         if self.cam.x > self.bg_w:
-            self.cam.x %= self.bg_w
+            self.cam.x = -self.bg_w
 
         self.bg_rect.x = self.cam.x
         self.screen.blit(self.bg, self.bg_rect)
@@ -151,10 +146,34 @@ class Defendish:
         self.ship.draw()
 
         # This is where the scanner will go.
-        pygame.draw.line(self.screen, (225, 125, 0),
-            (4, 32 * self.settings.scale),
-            (290 * self.settings.scale, 32 * self.settings.scale),
-            self.settings.scale
+
+        # Draw the map.
+        pygame.draw.rect(self.screen, (0, 0, 0),
+            (60 * self.scale, 0, 172 * self.scale, 32 * self.scale)
+        )
+        pygame.draw.line(self.screen, (255, 0, 0),
+            (60 * self.scale, 26 * self.scale),
+            (232 * self.scale, 26 * self.scale), self.scale
+        )
+
+        # Draw the player's ship.
+        pygame.draw.rect(self.screen, (255, 255, 255),
+            (60 * self.scale - (self.cam.x - self.bg_w) / self.scale / 4,
+             (self.ship.y - 32 * self.scale) / 6.5, self.scale, self.scale)
+        )
+
+        # Draw the borders.
+        pygame.draw.line(self.screen, (0, 0, 255),
+            (60 * self.scale, 0), (60 * self.scale, 32 * self.scale),
+            self.scale
+        )
+        pygame.draw.line(self.screen, (0, 0, 255),
+            (232 * self.scale, 0), (232 * self.scale, 32 * self.scale),
+            self.scale
+        )
+        pygame.draw.line(self.screen, (0, 0, 255),
+            (self.scale, 32 * self.scale),
+            (291 * self.scale, 32 * self.scale), self.scale
         )
 
         # Update the display.
@@ -176,9 +195,3 @@ class Defendish:
 
             # Run the program at a smooth framerate.
             self.clock.tick(60)
-
-
-if __name__ == "__main__":
-    # Create the game instance and run it.
-    d_game = Defendish()
-    d_game.run_game()

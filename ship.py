@@ -38,7 +38,7 @@ class Ship:
         self.rect = self.image.get_rect()
 
         # Move the ship to the center of the screen.
-        self.rect.x = 60
+        self.rect.x = 60 * self.scale
 
         self.rect.y = self.screen_rect.height//2
 
@@ -163,14 +163,12 @@ class Ship:
 
         # X movement.
         if self.moving_r:
-            self.moving_l = False
             self.dir = "r"
 
             if self.veloc_x < self.settings.player_max_speed:
                 self.veloc_x += self.settings.player_accel
 
         elif self.moving_l:
-            self.moving_r = False
             self.dir = "l"
 
             if self.veloc_x > -self.settings.player_max_speed:
@@ -182,14 +180,21 @@ class Ship:
                 self.veloc_x = 0
 
         # Flip the player when they turn.
-        if self.dir == "r" and self.rect.x > 60 * self.scale:
-            self.x -= self.flip_x
-            self.flip_x *= self.settings.player_decel-0.02
+        if self.dir == "r":
+            if self.x > 146 * self.scale:
+                self.flip_x = self.settings.player_max_speed * 1.5
 
-        elif (self.dir == "l" and
-                self.rect.x < 232 * self.scale - self.w):
-            self.x -= self.flip_x
-            self.flip_x *= self.settings.player_decel-0.02
+            if self.rect.x > 60 * self.scale:
+                self.x -= self.flip_x
+                self.flip_x *= self.settings.player_decel-0.02
+
+        elif self.dir == "l":
+            if self.x < 146 * self.scale:
+                self.flip_x = -self.settings.player_max_speed * 1.5
+
+            if self.rect.x < 232 * self.scale - self.w:
+                self.x -= self.flip_x
+                self.flip_x *= self.settings.player_decel-0.02
 
 
         # Keep the player within the left/right boundaries.
