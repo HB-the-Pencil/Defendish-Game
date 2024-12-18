@@ -1,11 +1,4 @@
 import sys
-import subprocess
-
-try:
-    subprocess.check_call([sys.executable,
-        "-m", "pip", "install", "-r", "requirements.txt"])
-except subprocess.CalledProcessError:
-    print("Error importing modules")
 
 import pygame
 from pygame.locals import *
