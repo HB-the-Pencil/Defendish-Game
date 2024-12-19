@@ -6,7 +6,7 @@ from pygame.locals import *
 from settings import Settings
 
 from ship import Ship
-
+from lazer import Lazer
 
 class Defendish:
     """Class to manage game assets, behavior, etc."""
@@ -16,6 +16,8 @@ class Defendish:
         Initialize pygame and create the game resources.
         """
         pygame.init()
+        pygame.font.init()
+        self.font = pygame.font.SysFont("Monospace", 18, bold=True)
 
         self.settings = Settings()
 
@@ -41,6 +43,8 @@ class Defendish:
         self.bg_w = self.bg_rect.w
 
         self.ship = Ship(self)
+        self.lazers = pygame.sprite.Group()
+        self.reload = 0
 
         self.cam = self.ship.cam
 
@@ -83,7 +87,10 @@ class Defendish:
         if event.key == K_LEFT:
             self.ship.moving_l = True
 
-        elif event.key == K_q:
+        if event.key == K_SPACE:
+            self._shoot_lazer()
+
+        if event.key == K_q:
             pygame.quit()
             sys.exit()
 
@@ -107,12 +114,56 @@ class Defendish:
         elif event.key == K_DOWN:
             self.ship.moving_d = False
 
+    def _shoot_lazer(self):
+        """
+        Fire a lazer.
+
+        :return: Adds a lazer to the lazer group.
+        """
+        if len(self.lazers) < self.settings.fire_limit and self.reload <= 0:
+            new_lazer = Lazer(self)
+            self.lazers.add(new_lazer)
+            self.reload = self.settings.reload
+
+        self.reload -= 1
 
     def _update_screen(self):
         """
         Update the screen and call draw functions.
 
         :return: Draws images to the screen and flips the display.
+        """
+        self._draw_bg()
+
+        # Draw the bullets.
+        for lazer in self.lazers.sprites():
+            lazer.draw()
+
+        # Draw the ship.
+        self.ship.draw()
+
+        # This is where the scanner will go.
+        self._draw_scanner()
+
+        # Debug stats.
+        if self.settings.debug:
+            c_pos = self.font.render(f"Cam:({int(self.cam.x)}, {int(self.cam.y)})",
+                True, (0, 0, 255)
+            )
+            p_pos = self.font.render(f"P1:({int(self.ship.x)}, {int(self.ship.y)})",
+                True, (0, 0, 255)
+            )
+            self.screen.blit(c_pos, (236 * self.scale, 4 * self.scale))
+            self.screen.blit(p_pos, (236 * self.scale, 16 * self.scale))
+
+        # Update the display.
+        pygame.display.update()
+
+    def _draw_bg(self):
+        """
+        Draw the background.
+
+        :return: Draws a looping background to the screen.
         """
         # Redraw the background.
         self.screen.fill(self.settings.bg_color)
@@ -134,12 +185,13 @@ class Defendish:
         self.bg_rect.x = self.cam.x - self.bg_w
         self.screen.blit(self.bg, self.bg_rect)
 
-        # Draw and update the ship.
-        self.ship.update()
-        self.ship.draw()
 
-        # This is where the scanner will go.
+    def _draw_scanner(self):
+        """
+        Draw the landscape scanner.
 
+        :return: Draws the scanner to the screen.
+        """
         # Draw the map.
         pygame.draw.rect(self.screen, (0, 0, 0),
             (60 * self.scale, 0, 172 * self.scale, 32 * self.scale)
@@ -152,7 +204,7 @@ class Defendish:
         # Draw the player's ship.
         pygame.draw.rect(self.screen, (255, 255, 255),
             (60 * self.scale - (self.cam.x - self.bg_w) / self.scale / 4,
-             (self.ship.y - 32 * self.scale) / 6.5, self.scale, self.scale)
+            (self.ship.y - 32 * self.scale) / 6.5, self.scale, self.scale)
         )
 
         # Draw the borders.
@@ -169,9 +221,6 @@ class Defendish:
             (291 * self.scale, 32 * self.scale), self.scale
         )
 
-        # Update the display.
-        pygame.display.update()
-
 
     def run_game(self):
         """
@@ -182,6 +231,10 @@ class Defendish:
         while True:
             # Check the events.
             self._check_events()
+
+            # Update ship and bullets.
+            self.ship.update()
+            self.lazers.update()
 
             # Update the display.
             self._update_screen()

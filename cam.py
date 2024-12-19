@@ -26,11 +26,3 @@ class Camera:
         """
         self.x += x_mov
         self.y += y_mov
-
-    def draw(self):
-        """
-        Draw the things that are in frame (needed?)
-
-        :return: Draws whatever is in frame.
-        """
-        pass

@@ -9,6 +9,8 @@ class Ship:
     def __init__(self, d_game):
         """
         Initialize the ship and its starting position.
+
+        :param d_game: The game that is currently running.
         """
         self.settings = Settings()
 
@@ -33,7 +35,7 @@ class Ship:
 
         self.image = self.images[f"ship_{self.dir}"]
         self.image = pygame.transform.scale(self.image,
-            (self.settings.player_w, self.settings.player_h)
+            (self.scale * 17, self.scale * 6)
         )
         self.rect = self.image.get_rect()
 
@@ -52,11 +54,11 @@ class Ship:
 
         self.flip_x = 0
 
-        self.x = int(self.rect.x)
-        self.y = int(self.rect.y)
+        self.x = self.rect.x
+        self.y = self.rect.y
 
-        self.w = int(self.rect.w)
-        self.h = int(self.rect.h)
+        self.w = self.rect.w
+        self.h = self.rect.h
 
     def draw(self):
         """
@@ -147,7 +149,10 @@ class Ship:
                         (rectx, recty, self.scale, self.scale)
                     )
 
-
+        if self.settings.debug:
+            pygame.draw.rect(self.screen, (255, 0, 0),
+                (self.x, self.y, self.w, self.h), self.scale
+            )
 
     def update(self):
         """
@@ -158,7 +163,7 @@ class Ship:
         # Update the ship based on the direction it's facing.
         self.image = self.images[f"ship_{self.dir}"]
         self.image = pygame.transform.scale(self.image,
-            (self.settings.player_w, self.settings.player_h)
+            (self.scale * 17, self.scale * 6)
         )
 
         # X movement.
@@ -181,19 +186,21 @@ class Ship:
 
         # Flip the player when they turn.
         if self.dir == "r":
-            if self.x > 146 * self.scale:
-                self.flip_x = self.settings.player_max_speed * 1.5
+            if self.x + self.w > 146 * self.scale:
+                self.flip_x = self.settings.player_max_speed
 
-            if self.rect.x > 60 * self.scale:
-                self.x -= self.flip_x
+            if self.x + self.w > 60 * self.scale:
+                self.x -= self.flip_x / 2
+                self.cam.x -= self.flip_x / 2
                 self.flip_x *= self.settings.player_decel-0.02
 
         elif self.dir == "l":
             if self.x < 146 * self.scale:
-                self.flip_x = -self.settings.player_max_speed * 1.5
+                self.flip_x = -self.settings.player_max_speed
 
-            if self.rect.x < 232 * self.scale - self.w:
-                self.x -= self.flip_x
+            if self.x < 232 * self.scale:
+                self.x -= self.flip_x / 2
+                self.cam.x -= self.flip_x / 2
                 self.flip_x *= self.settings.player_decel-0.02
 
 
