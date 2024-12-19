@@ -13,15 +13,15 @@ There will be a build eventually so that it can run as an executable file.
 
 ## Version Notes:
 ### 1.0 (Bare Bones Update):
-- Added the player and drifty movement.
-- Limited the player from going too high or too low.
-- Scale the window.
+- Added the player and drifty movement
+- Limited the player from going too high or too low
+- Scaled the window
 
 ### 1.0.1 (Fancy Moves Update):
-- Improved the player movement and adding smooth flipping.
-- Created a scrolling background and camera.
-- Created a space for the scanner.
-- Added fire particles.
+- Improved the player movement and adding smooth flipping
+- Created a scrolling background and camera
+- Created a space for the scanner
+- Added fire particles
 
 ### 1.0.2 (Sprite Update):
 - Minor bug fixes, mostly
@@ -32,3 +32,9 @@ There will be a build eventually so that it can run as an executable file.
 - Created main.py for easier runnning
 - Wrote script to automatically import dependencies
 - Began adding scanner
+
+### 1.0.4 (Fun Update):
+- Added lazers (lazer.py)
+- Improved ship flip animation
+- Added debug mode
+- Broke code into more modular sections
