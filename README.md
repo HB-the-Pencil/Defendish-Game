@@ -12,12 +12,12 @@ You can still manually install dependencies based on the above steps, but the co
 There will be a build eventually so that it can run as an executable file.
 
 ## Version Notes:
-### 1.0 (Bare Bones Update):
+## 1.0:
 - Added the player and drifty movement
 - Limited the player from going too high or too low
 - Scaled the window
 
-### 1.0.1 (Fancy Moves Update):
+### 1.0.1 (Fancy Movement Update):
 - Improved the player movement and adding smooth flipping
 - Created a scrolling background and camera
 - Created a space for the scanner
@@ -38,3 +38,8 @@ There will be a build eventually so that it can run as an executable file.
 - Improved ship flip animation
 - Added debug mode
 - Broke code into more modular sections
+
+### 1.0.5 (Sound Update):
+- Added sound effects!!
+- Added a shell for aliens (to be edited later)
+- Added stars (with parallax) to the background
