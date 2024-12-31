@@ -1,4 +1,5 @@
 import sys
+import random as r
 
 import pygame
 from pygame.locals import *
@@ -7,6 +8,7 @@ from settings import Settings
 
 from ship import Ship
 from lazer import Lazer
+from star import Star
 
 class Defendish:
     """Class to manage game assets, behavior, etc."""
@@ -46,7 +48,20 @@ class Defendish:
         self.lazers = pygame.sprite.Group()
         self.reload = 0
 
+        # Sound things. Sounds from woolyss.com.
+        self.fly_sound = pygame.mixer.Sound("sounds/Defender_Thrust.wav")
+        self.lazer_sound = pygame.mixer.Sound("sounds/Defender_Fire.wav")
+
+        self.channel_ship = pygame.mixer.Channel(0)
+        self.channel_lazer = pygame.mixer.Channel(1)
+
         self.cam = self.ship.cam
+
+        self.stars = [
+            Star(r.randint(0, self.bg_w // self.settings.parallax),
+                r.randint(32 * self.scale, 180 * self.scale), self
+            ) for i in range(10)
+        ]
 
 
     def _check_events(self):
@@ -83,9 +98,13 @@ class Defendish:
 
         if event.key == K_RIGHT:
             self.ship.moving_r = True
+            if not self.channel_ship.get_busy():
+                self.channel_ship.play(self.fly_sound)
 
         if event.key == K_LEFT:
             self.ship.moving_l = True
+            if not self.channel_ship.get_busy():
+                self.channel_ship.play(self.fly_sound)
 
         if event.key == K_SPACE:
             self._shoot_lazer()
@@ -103,9 +122,11 @@ class Defendish:
         :return: Stops moving the ship, etc.
         """
         if event.key == K_RIGHT:
+            self.channel_ship.stop()
             self.ship.moving_r = False
 
         if event.key == K_LEFT:
+            self.channel_ship.stop()
             self.ship.moving_l = False
 
         if event.key == K_UP:
@@ -121,6 +142,7 @@ class Defendish:
         :return: Adds a lazer to the lazer group.
         """
         if len(self.lazers) < self.settings.fire_limit and self.reload <= 0:
+            self.channel_lazer.play(self.lazer_sound)
             new_lazer = Lazer(self)
             self.lazers.add(new_lazer)
             self.reload = self.settings.reload
@@ -147,10 +169,12 @@ class Defendish:
 
         # Debug stats.
         if self.settings.debug:
-            c_pos = self.font.render(f"Cam:({int(self.cam.x)}, {int(self.cam.y)})",
+            c_pos = self.font.render(
+                f"Cam:({int(self.cam.x)}, {int(self.cam.y)})",
                 True, (0, 0, 255)
             )
-            p_pos = self.font.render(f"P1:({int(self.ship.x)}, {int(self.ship.y)})",
+            p_pos = self.font.render(
+                f"P1:({int(self.ship.x)}, {int(self.ship.y)})",
                 True, (0, 0, 255)
             )
             self.screen.blit(c_pos, (236 * self.scale, 4 * self.scale))
@@ -184,6 +208,11 @@ class Defendish:
 
         self.bg_rect.x = self.cam.x - self.bg_w
         self.screen.blit(self.bg, self.bg_rect)
+
+        # Draw the stars.
+        for star in self.stars:
+            star.update()
+            star.draw()
 
 
     def _draw_scanner(self):

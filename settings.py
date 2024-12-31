@@ -10,6 +10,7 @@ class Settings:
         self.screen_w = 292 * self.scale
         self.screen_h = 240 * self.scale
         self.bg_color = (0, 0, 0)
+        self.parallax = 3
 
         # Player settings.
         self.player_max_speed = 5 * self.scale

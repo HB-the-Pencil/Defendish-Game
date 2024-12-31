@@ -171,12 +171,16 @@ class Ship:
             self.dir = "r"
 
             if self.veloc_x < self.settings.player_max_speed:
+                if self.veloc_x < 0:
+                    self.veloc_x *= 0.5 # verify in arcade
                 self.veloc_x += self.settings.player_accel
 
         elif self.moving_l:
             self.dir = "l"
 
             if self.veloc_x > -self.settings.player_max_speed:
+                if self.veloc_x > 0:
+                    self.veloc_x *= 0.5 # verify in arcade
                 self.veloc_x -= self.settings.player_accel
 
         else:
@@ -190,8 +194,8 @@ class Ship:
                 self.flip_x = self.settings.player_max_speed
 
             if self.x + self.w > 60 * self.scale:
-                self.x -= self.flip_x / 2
-                self.cam.x -= self.flip_x / 2
+                self.x -= self.flip_x / 1.5
+                self.cam.x -= self.flip_x / 1.75
                 self.flip_x *= self.settings.player_decel-0.02
 
         elif self.dir == "l":
@@ -199,8 +203,8 @@ class Ship:
                 self.flip_x = -self.settings.player_max_speed
 
             if self.x < 232 * self.scale:
-                self.x -= self.flip_x / 2
-                self.cam.x -= self.flip_x / 2
+                self.x -= self.flip_x / 1.5
+                self.cam.x -= self.flip_x / 1.75
                 self.flip_x *= self.settings.player_decel-0.02
 
 
